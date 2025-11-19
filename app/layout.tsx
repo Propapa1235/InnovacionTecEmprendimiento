@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
+
 import { Analytics } from '@vercel/analytics/next'
 import './globals.css'
-
 import { Inter, Inter as V0_Font_Inter, Geist_Mono as V0_Font_Geist_Mono, Source_Serif_4 as V0_Font_Source_Serif_4 } from 'next/font/google'
 
 // Initialize fonts
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.NodeNode
 }>) {
   return (
     <html lang="es">
