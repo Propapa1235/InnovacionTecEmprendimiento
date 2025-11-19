@@ -288,7 +288,7 @@ export default function HomePage() {
                 onClick={() => setSelectedCrime(crime)}
               >
                 <CardHeader>
-                  <div className={`h-12 w-12 rounded-lg bg-${crime.color}-100 dark:bg-${crime.color}-900/30 flex items-center justify-center mb-4`}>
+                  <div className="h-12 w-12 rounded-lg bg-blue-50 dark:bg-blue-950 flex items-center justify-center mb-4">
                     {crime.icon}
                   </div>
                   <CardTitle>{crime.title}</CardTitle>
@@ -321,7 +321,7 @@ export default function HomePage() {
             <>
               <DialogHeader>
                 <DialogTitle className="flex items-center gap-3 text-2xl">
-                  <div className={`h-10 w-10 rounded-lg bg-${selectedCrime.color}-100 dark:bg-${selectedCrime.color}-900/30 flex items-center justify-center`}>
+                  <div className="h-10 w-10 rounded-lg bg-blue-50 dark:bg-blue-950 flex items-center justify-center">
                     {selectedCrime.icon}
                   </div>
                   {selectedCrime.title}
