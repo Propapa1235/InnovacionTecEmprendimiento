@@ -1,10 +1,223 @@
+'use client'
+
 import { Shield, AlertTriangle, Eye, Lock, Mail, CreditCard, MessageSquare, CheckCircle2, ArrowRight, MousePointerClick, ExternalLink, Phone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import Image from 'next/image'
+import { useState } from 'react'
+
+type CybercrimeType = {
+  id: string
+  icon: React.ReactNode
+  title: string
+  description: string
+  color: string
+  detailedInfo: {
+    definition: string
+    examples: string[]
+    howToIdentify: string[]
+    prevention: string[]
+  }
+}
 
 export default function HomePage() {
+  const [selectedCrime, setSelectedCrime] = useState<CybercrimeType | null>(null)
+
+  const cybercrimes: CybercrimeType[] = [
+    {
+      id: 'phishing',
+      icon: <Mail className="h-6 w-6 text-red-600 dark:text-red-400" />,
+      title: 'Phishing',
+      description: 'Correos electrónicos o mensajes que parecen legítimos pero buscan robar tu información personal, contraseñas o datos bancarios haciéndose pasar por instituciones confiables.',
+      color: 'red',
+      detailedInfo: {
+        definition: 'El phishing es una técnica de ingeniería social donde los atacantes se hacen pasar por entidades legítimas para engañar a las víctimas y obtener información confidencial como contraseñas, números de tarjetas de crédito o datos personales.',
+        examples: [
+          'Correos que parecen del banco solicitando actualizar datos',
+          'Mensajes de "Netflix" o "Amazon" pidiendo verificar la cuenta',
+          'Emails de la universidad solicitando cambiar contraseña urgentemente',
+          'Mensajes de WhatsApp de "familiares" pidiendo dinero urgente'
+        ],
+        howToIdentify: [
+          'Errores gramaticales o de ortografía en el mensaje',
+          'Dirección de correo del remitente sospechosa o diferente al oficial',
+          'Solicitudes urgentes de información personal o financiera',
+          'Enlaces que no coinciden con el sitio web oficial',
+          'Amenazas de cerrar cuenta si no actúas inmediatamente'
+        ],
+        prevention: [
+          'Nunca hagas clic en enlaces de correos o mensajes sospechosos',
+          'Verifica siempre el dominio del remitente',
+          'Accede directamente a los sitios web escribiendo la URL en el navegador',
+          'Activa filtros anti-phishing en tu correo electrónico',
+          'Contacta directamente a la institución si tienes dudas'
+        ]
+      }
+    },
+    {
+      id: 'financial-fraud',
+      icon: <CreditCard className="h-6 w-6 text-purple-600 dark:text-purple-400" />,
+      title: 'Fraude Financiero',
+      description: 'Ofertas falsas de empleo, becas fraudulentas, o tiendas en línea falsas que buscan obtener tus datos bancarios o realizar cargos no autorizados.',
+      color: 'purple',
+      detailedInfo: {
+        definition: 'El fraude financiero en línea incluye cualquier esquema diseñado para obtener dinero o información financiera de manera fraudulenta a través de internet, aprovechándose especialmente de estudiantes que buscan oportunidades económicas.',
+        examples: [
+          'Ofertas de trabajo desde casa con salarios irrealmente altos',
+          'Becas o apoyos estudiantiles que requieren "cuota de inscripción"',
+          'Tiendas en línea con precios muy bajos que nunca envían productos',
+          'Esquemas piramidales disfrazados de oportunidades de negocio',
+          'Sorteos o premios que requieren pago para reclamarlos'
+        ],
+        howToIdentify: [
+          'Promesas de dinero fácil o ganancias garantizadas',
+          'Solicitud de pago por adelantado para obtener empleo o beca',
+          'Sitios web sin información de contacto o ubicación física',
+          'Presión para tomar decisiones rápidas',
+          'Falta de reseñas o comentarios negativos en internet'
+        ],
+        prevention: [
+          'Investiga la empresa o institución antes de proporcionar datos',
+          'Desconfía de ofertas que parecen demasiado buenas para ser verdad',
+          'Usa métodos de pago seguros con protección al comprador',
+          'Verifica que las becas oficiales nunca cobran por aplicar',
+          'Consulta con servicios estudiantiles de tu universidad sobre oportunidades legítimas'
+        ]
+      }
+    },
+    {
+      id: 'identity-theft',
+      icon: <Eye className="h-6 w-6 text-orange-600 dark:text-orange-400" />,
+      title: 'Robo de Identidad',
+      description: 'Los delincuentes utilizan tu información personal para crear cuentas falsas, realizar compras o cometer fraudes en tu nombre.',
+      color: 'orange',
+      detailedInfo: {
+        definition: 'El robo de identidad ocurre cuando alguien obtiene y usa tu información personal (nombre, número de estudiante, CURP, credenciales) sin tu permiso para cometer fraude o delitos.',
+        examples: [
+          'Apertura de cuentas bancarias o tarjetas de crédito a tu nombre',
+          'Suplantación en redes sociales para estafar a tus contactos',
+          'Uso de tu credencial estudiantil para obtener beneficios',
+          'Presentación de trámites oficiales con tus datos',
+          'Compras en línea usando tu información'
+        ],
+        howToIdentify: [
+          'Cargos en tu cuenta que no reconoces',
+          'Notificaciones de cuentas que no abriste',
+          'Llamadas de cobranza por deudas que no contrataste',
+          'Amigos que reciben mensajes extraños desde tus cuentas',
+          'Imposibilidad de acceder a tus cuentas habituales'
+        ],
+        prevention: [
+          'No compartas fotos de documentos oficiales en redes sociales',
+          'Usa contraseñas únicas y fuertes para cada cuenta',
+          'Activa alertas de movimientos en tus cuentas bancarias',
+          'Revisa regularmente tus estados de cuenta',
+          'Protege tu información personal y no la compartas innecesariamente',
+          'Ten cuidado al conectarte en computadoras públicas'
+        ]
+      }
+    },
+    {
+      id: 'social-engineering',
+      icon: <MessageSquare className="h-6 w-6 text-green-600 dark:text-green-400" />,
+      title: 'Ingeniería Social',
+      description: 'Técnicas de manipulación que buscan que reveles información confidencial o realices acciones que comprometan tu seguridad, a través de la confianza o el engaño.',
+      color: 'green',
+      detailedInfo: {
+        definition: 'La ingeniería social es el arte de manipular personas para que divulguen información confidencial o realicen acciones específicas, explotando la psicología humana en lugar de vulnerabilidades técnicas.',
+        examples: [
+          'Llamadas de "soporte técnico" pidiendo acceso remoto a tu computadora',
+          'Personas que se hacen pasar por personal universitario solicitando datos',
+          'Mensajes de "compañeros" pidiendo ayuda con tareas urgentes que requieren tus credenciales',
+          'Perfiles falsos en redes sociales que generan confianza para estafar',
+          'Pretextos elaborados para obtener información personal'
+        ],
+        howToIdentify: [
+          'Solicitudes inesperadas de información sensible',
+          'Creación de urgencia o presión para actuar rápido',
+          'Apelación a la autoridad o intimidación',
+          'Ofertas de ayuda no solicitada',
+          'Inconsistencias en la historia o detalles que no cuadran'
+        ],
+        prevention: [
+          'Verifica siempre la identidad de quien solicita información',
+          'No compartas contraseñas ni códigos de verificación con nadie',
+          'Cuestiona solicitudes inusuales, incluso de conocidos',
+          'Contacta directamente a la institución por canales oficiales',
+          'Educa a tu círculo cercano sobre estas técnicas',
+          'Confía en tu intuición si algo no se siente bien'
+        ]
+      }
+    },
+    {
+      id: 'ransomware',
+      icon: <Lock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />,
+      title: 'Ransomware',
+      description: 'Software malicioso que cifra tus archivos y exige un rescate para recuperarlos. Puede llegar a través de descargas sospechosas o enlaces maliciosos.',
+      color: 'yellow',
+      detailedInfo: {
+        definition: 'El ransomware es un tipo de malware que encripta los archivos de la víctima, haciéndolos inaccesibles, y exige el pago de un rescate (generalmente en criptomonedas) para proporcionar la clave de descifrado.',
+        examples: [
+          'Archivos de tareas y proyectos que ya no se pueden abrir',
+          'Mensaje en pantalla exigiendo pago en Bitcoin',
+          'Extensiones de archivos cambiadas a códigos extraños',
+          'Imposibilidad de acceder a fotos, documentos o trabajos',
+          'Ventanas emergentes con cuentas regresivas para pagar'
+        ],
+        howToIdentify: [
+          'Archivos súbitamente inaccesibles o con extensiones raras',
+          'Mensajes de rescate en tu escritorio o carpetas',
+          'Cambio de fondos de pantalla con instrucciones de pago',
+          'Lentitud extrema del sistema',
+          'Aparición de archivos README con instrucciones de pago'
+        ],
+        prevention: [
+          'Mantén copias de respaldo de archivos importantes en la nube o disco externo',
+          'No descargues archivos de fuentes no confiables',
+          'Mantén tu antivirus y sistema operativo actualizados',
+          'No hagas clic en enlaces de correos desconocidos',
+          'Evita usar USBs de origen desconocido',
+          'Deshabilita macros en documentos de Office de fuentes no confiables'
+        ]
+      }
+    },
+    {
+      id: 'fake-websites',
+      icon: <AlertTriangle className="h-6 w-6 text-pink-600 dark:text-pink-400" />,
+      title: 'Sitios Web Falsos',
+      description: 'Páginas que imitan sitios legítimos de bancos, universidades o tiendas en línea para robar credenciales y datos personales de usuarios desprevenidos.',
+      color: 'pink',
+      detailedInfo: {
+        definition: 'Los sitios web falsos son páginas fraudulentas diseñadas para parecer idénticas a sitios legítimos con el objetivo de robar credenciales de acceso, información personal o datos financieros de usuarios desprevenidos.',
+        examples: [
+          'Portales universitarios falsos que solicitan usuario y contraseña',
+          'Páginas de banca en línea con URLs similares pero incorrectas',
+          'Tiendas en línea falsas con productos a precios muy bajos',
+          'Formularios de becas o apoyos gubernamentales falsos',
+          'Copias de plataformas educativas como Classroom o Moodle'
+        ],
+        howToIdentify: [
+          'URL con errores ortográficos o dominios sospechosos (.tk, .ml)',
+          'Ausencia del candado de seguridad (https) en el navegador',
+          'Diseño ligeramente diferente al sitio original',
+          'Solicitud de información inusual o excesiva',
+          'Errores gramaticales o de traducción en el contenido',
+          'Falta de información de contacto legítima'
+        ],
+        prevention: [
+          'Escribe manualmente las URLs de sitios importantes en lugar de hacer clic en enlaces',
+          'Verifica siempre que la URL comience con https:// y tenga el candado',
+          'Usa marcadores (favoritos) para sitios que visitas frecuentemente',
+          'Verifica el certificado de seguridad del sitio haciendo clic en el candado',
+          'Desconfía de enlaces en correos, mejor accede directamente al sitio',
+          'Instala extensiones de navegador que detecten sitios maliciosos'
+        ]
+      }
+    }
+  ]
+
   return (
     <div className="min-h-screen bg-background">
       {/* Hero Section */}
@@ -63,109 +276,121 @@ export default function HomePage() {
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold mb-4">Tipos de Ciberdelitos Comunes</h2>
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Conoce las amenazas más frecuentes que enfrentan los estudiantes universitarios
+              Conoce las amenazas más frecuentes que enfrentan los estudiantes universitarios. Haz clic en cada tarjeta para ver más información.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <Card className="border-2 hover:border-blue-300 dark:hover:border-blue-700 transition-colors">
-              <CardHeader>
-                <div className="h-12 w-12 rounded-lg bg-red-100 dark:bg-red-900/30 flex items-center justify-center mb-4">
-                  <Mail className="h-6 w-6 text-red-600 dark:text-red-400" />
-                </div>
-                <CardTitle>Fishing</CardTitle>
-                <CardDescription>Correos y mensajes fraudulentos</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Correos electrónicos o mensajes que parecen legítimos pero buscan robar tu información personal, 
-                  contraseñas o datos bancarios haciéndose pasar por instituciones confiables.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-blue-300 dark:hover:border-blue-700 transition-colors">
-              <CardHeader>
-                <div className="h-12 w-12 rounded-lg bg-purple-100 dark:bg-purple-900/30 flex items-center justify-center mb-4">
-                  <CreditCard className="h-6 w-6 text-purple-600 dark:text-purple-400" />
-                </div>
-                <CardTitle>Fraude Financiero</CardTitle>
-                <CardDescription>Estafas de pago en línea</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Ofertas falsas de empleo, becas fraudulentas, o tiendas en línea falsas que buscan obtener 
-                  tus datos bancarios o realizar cargos no autorizados.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-blue-300 dark:hover:border-blue-700 transition-colors">
-              <CardHeader>
-                <div className="h-12 w-12 rounded-lg bg-orange-100 dark:bg-orange-900/30 flex items-center justify-center mb-4">
-                  <Eye className="h-6 w-6 text-orange-600 dark:text-orange-400" />
-                </div>
-                <CardTitle>Robo de Identidad</CardTitle>
-                <CardDescription>Suplantación de identidad</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Los delincuentes utilizan tu información personal para crear cuentas falsas, 
-                  realizar compras o cometer fraudes en tu nombre.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-blue-300 dark:hover:border-blue-700 transition-colors">
-              <CardHeader>
-                <div className="h-12 w-12 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center mb-4">
-                  <MessageSquare className="h-6 w-6 text-green-600 dark:text-green-400" />
-                </div>
-                <CardTitle>Ingeniería Social</CardTitle>
-                <CardDescription>Manipulación psicológica</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Técnicas de manipulación que buscan que reveles información confidencial o realices 
-                  acciones que comprometan tu seguridad, a través de la confianza o el engaño.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-blue-300 dark:hover:border-blue-700 transition-colors">
-              <CardHeader>
-                <div className="h-12 w-12 rounded-lg bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center mb-4">
-                  <Lock className="h-6 w-6 text-yellow-600 dark:text-yellow-400" />
-                </div>
-                <CardTitle>Ransomware</CardTitle>
-                <CardDescription>Secuestro de datos</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Software malicioso que cifra tus archivos y exige un rescate para recuperarlos. 
-                  Puede llegar a través de descargas sospechosas o enlaces maliciosos.
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-2 hover:border-blue-300 dark:hover:border-blue-700 transition-colors">
-              <CardHeader>
-                <div className="h-12 w-12 rounded-lg bg-pink-100 dark:bg-pink-900/30 flex items-center justify-center mb-4">
-                  <AlertTriangle className="h-6 w-6 text-pink-600 dark:text-pink-400" />
-                </div>
-                <CardTitle>Sitios Web Falsos</CardTitle>
-                <CardDescription>Páginas web fraudulentas</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  Páginas que imitan sitios legítimos de bancos, universidades o tiendas en línea 
-                  para robar credenciales y datos personales de usuarios desprevenidos.
-                </p>
-              </CardContent>
-            </Card>
+            {cybercrimes.map((crime) => (
+              <Card 
+                key={crime.id}
+                className="border-2 hover:border-blue-300 dark:hover:border-blue-700 transition-colors cursor-pointer hover:shadow-lg"
+                onClick={() => setSelectedCrime(crime)}
+              >
+                <CardHeader>
+                  <div className={`h-12 w-12 rounded-lg bg-${crime.color}-100 dark:bg-${crime.color}-900/30 flex items-center justify-center mb-4`}>
+                    {crime.icon}
+                  </div>
+                  <CardTitle>{crime.title}</CardTitle>
+                  <CardDescription>
+                    {crime.title === 'Phishing' && 'Correos y mensajes fraudulentos'}
+                    {crime.title === 'Fraude Financiero' && 'Estafas de pago en línea'}
+                    {crime.title === 'Robo de Identidad' && 'Suplantación de identidad'}
+                    {crime.title === 'Ingeniería Social' && 'Manipulación psicológica'}
+                    {crime.title === 'Ransomware' && 'Secuestro de datos'}
+                    {crime.title === 'Sitios Web Falsos' && 'Páginas web fraudulentas'}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+                    {crime.description}
+                  </p>
+                  <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">
+                    Haz clic para ver más detalles →
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
+
+      <Dialog open={!!selectedCrime} onOpenChange={() => setSelectedCrime(null)}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+          {selectedCrime && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-3 text-2xl">
+                  <div className={`h-10 w-10 rounded-lg bg-${selectedCrime.color}-100 dark:bg-${selectedCrime.color}-900/30 flex items-center justify-center`}>
+                    {selectedCrime.icon}
+                  </div>
+                  {selectedCrime.title}
+                </DialogTitle>
+                <DialogDescription className="text-base pt-2">
+                  {selectedCrime.detailedInfo.definition}
+                </DialogDescription>
+              </DialogHeader>
+
+              <div className="space-y-6 mt-4">
+                <div>
+                  <h4 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                    <AlertTriangle className="h-5 w-5 text-orange-600" />
+                    Ejemplos Comunes
+                  </h4>
+                  <ul className="space-y-2">
+                    {selectedCrime.detailedInfo.examples.map((example, index) => (
+                      <li key={index} className="flex gap-2 text-sm">
+                        <span className="text-orange-600 font-bold">•</span>
+                        <span>{example}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                    <Eye className="h-5 w-5 text-blue-600" />
+                    Cómo Identificarlo
+                  </h4>
+                  <ul className="space-y-2">
+                    {selectedCrime.detailedInfo.howToIdentify.map((item, index) => (
+                      <li key={index} className="flex gap-2 text-sm">
+                        <span className="text-blue-600 font-bold">•</span>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                <div className="border-t pt-4">
+                  <h4 className="font-semibold text-lg mb-3 flex items-center gap-2">
+                    <Shield className="h-5 w-5 text-green-600" />
+                    Cómo Prevenirlo
+                  </h4>
+                  <ul className="space-y-2">
+                    {selectedCrime.detailedInfo.prevention.map((item, index) => (
+                      <li key={index} className="flex gap-2 text-sm">
+                        <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0 mt-0.5" />
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+
+              <div className="mt-6 pt-4 border-t">
+                <Button 
+                  variant="outline" 
+                  className="w-full"
+                  onClick={() => setSelectedCrime(null)}
+                >
+                  Cerrar
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Consejos de Prevención */}
       <section className="bg-muted/50 py-16">
@@ -453,7 +678,7 @@ export default function HomePage() {
                 <p>Zepeda Garcia Christopher Daniel</p>
               </div>
             </div>
-            {/* Fin de sección de autores*/}
+            {/* Fin de la sección de autores */}
             
             <div className="text-center text-sm text-muted-foreground border-t pt-6">
               <p>© 2025 Proyecto Ciberdelitos. Creado para la comunidad estudiantil universitaria.</p>
